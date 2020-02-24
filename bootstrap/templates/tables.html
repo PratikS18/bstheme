@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+          <!-- Page Heading -->
+          <h1 class="h3 mb-2 text-gray-800">Titles for last 18 months</h1>
+          <p class="mb-4">Here, we have the complete list of 18 months titles with their piracy data with respect to date found and resolved.</p>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable123" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>ISBN</th>
+                      <th>Book Name</th>
+                      <th>URL</th>
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th>ISBN</th>
+                      <th>Book Name</th>
+                      <th>URL</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                  {% for item in items %}
+                        <tr>
+                          <td>{{ item.ISBN }}</td>
+                          <td>{{ item.Book_name }} </td>
+                          <td><a href='{{ item.ISBN}}'>Click here to see links</a></td>
+                        </tr>
+
+                  {% endfor %}
+                </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+{% endblock %}
+
+{% block js %}
+  <script src="{% static "vendor/jquery/jquery.js" %}"></script>
+  <script src="{% static "vendor/bootstrap/js/bootstrap.bundle.js" %}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{% static "vendor/jquery-easing/jquery.easing.js" %}"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="{% static "js/sb-admin-2.js" %}"></script>
+
+  <!-- Page level plugins -->
+  <script src="{% static "vendor/datatables/jquery.dataTables.js" %}"></script>
+  <script src="{% static "vendor/datatables/dataTables.bootstrap4.js" %}"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/af-2.3.0/b-1.5.2/b-colvis-1.5.2/b-flash-1.5.2/b-html5-1.5.2/b-print-1.5.2/cr-1.5.0/fh-3.1.4/r-2.2.2/datatables.min.css"/>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/af-2.3.0/b-1.5.2/b-colvis-1.5.2/b-flash-1.5.2/b-html5-1.5.2/b-print-1.5.2/cr-1.5.0/fh-3.1.4/r-2.2.2/datatables.min.js"></script>
+
+  <script>
+      $(document).ready( function () {
+      $('#dataTable123').DataTable({
+  "pageLength": 10,
+  "ordering": false,
+      dom: 'B<"clear">lfrtip',
+      buttons: {
+          name: 'primary',
+          buttons: ['csv', 'excel', 'pdf' ]
+          }}
+      );
+  } );
+  </script>
+
+{% endblock %}
