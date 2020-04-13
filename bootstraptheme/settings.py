@@ -25,7 +25,7 @@ SECRET_KEY = '$hw^$a91@$9rmnddkd2uyb$z#mixwtj%vd0sh3mg4%0y@j29t^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['123.252.235.*','localhost','127.0.0.1','123.252.235.126']
+ALLOWED_HOSTS = ['123.252.235.*','localhost','127.0.0.1','123.252.235.126','shetpratik.pythonanywhere.com']
 
 
 # Application definition
@@ -120,3 +120,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/home/shetpratik/bstheme/bootstrap/static'

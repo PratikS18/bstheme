@@ -1,13 +1,61 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Count
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate
+from django import forms
+from .forms import SignUpForm
 from .models import *
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect,  HttpResponse
+from django.views.decorators.cache import never_cache
+
+
 # Create your views here.
 
+def sign_in(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request,user)
+            return redirect('index')
+    return render(request, 'login.html', {})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('index')
+    else:
+        form = SignUpForm()
+    return render(request, 'register.html', {'form': form})
+
+@never_cache
+@login_required(login_url='sign_in')
 def index(request):
-    return render(request, 'index.html')
+    FH_no = RawData.objects.raw('SELECT id, COUNT(link_type) as tc FROM bootstrap_rawdata WHERE link_type = "Filehoster"')
+    Ws_no = RawData.objects.raw('SELECT id, COUNT(link_type) as tc FROM bootstrap_rawdata WHERE link_type = "Website"')
+    Tr_no = RawData.objects.raw('SELECT id, COUNT(link_type) as tc FROM bootstrap_rawdata WHERE link_type = "Torrent"')
+    Top_pirated_books = RawData.objects.raw('SELECT bootstrap_rawdata.id, book_name, COUNT(book_name) As totalcount FROM bootstrap_rawdata JOIN bootstrap_toplist On bootstrap_rawdata.isbn = bootstrap_toplist.isbn group by book_name Order By COUNT(book_name) DESC LIMIT 10')
+    Top_pirating_websites = RawData.objects.raw('SELECT bootstrap_rawdata.id, SUBSTR(SUBSTR(link, INSTR(link, "//") + 2), 0, INSTR(SUBSTR(link, INSTR(link, "//") + 2), "/")) As website, COUNT(*) As tcnt FROM bootstrap_rawdata group by 2 Order by tcnt DESC LIMIT 10')
+    context = {
+        'FH_no': FH_no,
+        'Ws_no': Ws_no,
+        'Tr_no': Tr_no,
+        'Top_pirated_books': Top_pirated_books,
+        'Top_pirating_websites': Top_pirating_websites,
+    }
+    return render(request, 'index.html', context)
 
 def tables(request):
-    items = TopList.objects.raw('SELECT * from bootstrap_toplist')
+    items = TopList.objects.raw('SELECT * from bootstrap_toplist ORDER BY id DESC')
     context = {
         'items': items,
     }
@@ -6063,3 +6111,463 @@ def display_1788995783(request):
         'collections' : collections,
     }
     return render(request, '1788995783.html', context)
+def display_1838647767(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838647767"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838647767"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838647767.html', context)
+
+def display_1838981950(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838981950"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838981950"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838981950.html', context)
+
+def display_1838828869(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838828869"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838828869"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838828869.html', context)
+
+def display_1838821562(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838821562"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838821562"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838821562.html', context)
+
+def display_1838643419(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838643419"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838643419"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838643419.html', context)
+
+def display_1789615798(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789615798"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789615798"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789615798.html', context)
+
+def display_1838643818(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838643818"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838643818"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838643818.html', context)
+
+def display_1838822836(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838822836"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838822836"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838822836.html', context)
+
+def display_1789801788(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789801788"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789801788"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789801788.html', context)
+
+def display_1789617944(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789617944"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789617944"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789617944.html', context)
+
+def display_1789537258(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789537258"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789537258"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789537258.html', context)
+
+def display_1838987428(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838987428"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838987428"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838987428.html', context)
+
+def display_1789805783(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789805783"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789805783"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789805783.html', context)
+
+def display_1838986502(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838986502"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838986502"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838986502.html', context)
+
+def display_1838645640(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838645640"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838645640"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838645640.html', context)
+
+def display_1838644830(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838644830"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838644830"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838644830.html', context)
+
+def display_1789801818(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789801818"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789801818"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789801818.html', context)
+
+def display_1839217073(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1839217073"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1839217073"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1839217073.html', context)
+
+def display_1838828044(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838828044"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838828044"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838828044.html', context)
+
+def display_1838827471(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838827471"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838827471"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838827471.html', context)
+
+def display_1838556877(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838556877"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838556877"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838556877.html', context)
+
+def display_1789538467(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789538467"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789538467"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789538467.html', context)
+
+def display_1839214805(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1839214805"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1839214805"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1839214805.html', context)
+
+def display_1789950848(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789950848"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789950848"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789950848.html', context)
+
+def display_1789530881(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789530881"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789530881"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789530881.html', context)
+
+def display_1838821090(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838821090"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838821090"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838821090.html', context)
+
+def display_1839211539(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1839211539"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1839211539"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1839211539.html', context)
+
+def display_1838821651(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838821651"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838821651"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838821651.html', context)
+
+def display_1800207719(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1800207719"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1800207719"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1800207719.html', context)
+
+def display_1838643575(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838643575"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838643575"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838643575.html', context)
+
+def display_183921757X(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="183921757X"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="183921757X"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '183921757X.html', context)
+
+def display_1800205953(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1800205953"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1800205953"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1800205953.html', context)
+
+def display_1789613175(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789613175"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789613175"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789613175.html', context)
+
+def display_1838557040(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838557040"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838557040"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838557040.html', context)
+
+def display_1800204094(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1800204094"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1800204094"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1800204094.html', context)
+
+def display_1800209045(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1800209045"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1800209045"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1800209045.html', context)
+
+def display_1838981489(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838981489"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838981489"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838981489.html', context)
+
+def display_1800203675(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1800203675"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1800203675"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1800203675.html', context)
+
+def display_1789950155(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789950155"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789950155"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789950155.html', context)
+
+def display_1838826254(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838826254"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838826254"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838826254.html', context)
+
+def display_1839213108(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1839213108"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1839213108"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1839213108.html', context)
+
+def display_1838551301(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838551301"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838551301"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838551301.html', context)
+
+def display_1838984852(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838984852"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838984852"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838984852.html', context)
+
+def display_1839216999(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1839216999"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1839216999"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1839216999.html', context)
+
+def display_1838982175(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838982175"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838982175"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838982175.html', context)
+
+def display_1838646558(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838646558"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838646558"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838646558.html', context)
+
+def display_1838983988(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838983988"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838983988"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838983988.html', context)
+
+def display_1789805678(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789805678"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789805678"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789805678.html', context)
+
+def display_1838981772(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1838981772"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1838981772"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1838981772.html', context)
+
+def display_1789531616(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1789531616"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1789531616"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1789531616.html', context)
+
+def display_1839215526(request):
+    items = RawData.objects.raw('SELECT * from bootstrap_rawdata Where isbn=="1839215526"')
+    collections = TopList.objects.raw('SELECT * from bootstrap_toplist  Where isbn=="1839215526"')
+    context = {
+        'items': items,
+        'collections' : collections,
+    }
+    return render(request, '1839215526.html', context)
+
+
