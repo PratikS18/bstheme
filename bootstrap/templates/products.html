@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+          <!-- Page Heading -->
+          {% for coln in collections %}
+          <h2>You are viewing report for {{coln.Book_name}}</h2><hr>
+          {% endfor %}
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Infringement Records</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable123" width="100%" cellspacing="0">
+                  <label for="minDate">Start date:</label><input type="text" id="minDate" placeholder="dd/mm/yyyy" style="margin-left:3px"><label for="maxDate" style="margin-left:10px">End date:</label><input type="text" id="maxDate" placeholder="dd/mm/yyyy" style="margin-right:10px; margin-left:3px"><button id="btnGo" type="button">Filter</button>
+                  <thead>
+                    <tr>
+                      <tr>
+                          <th>ISBN</th>
+                          <th>Links</th>
+                          <th>Date found</th>
+                          <th>Date resolved</th>
+                      </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th>ISBN</th>
+                      <th>Links</th>
+                      <th>Date found</th>
+                      <th>Date resolved</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                  {% for item in items %}
+                        <tr>
+                          <td width="10%">{{ item.ISBN }}</td>
+                          <td style="max-width:150px; word-wrap:break-word"><a href='{{ item.link }}'>{{ item.link }}</a></td>
+                          <td width="13%">{{ item.date_found }}</td>
+                          <td width="13%">{{ item.date_resolved }}</td>
+                        </tr>
+
+                  {% endfor %}
+                </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+{% endblock %}
+
+{% block js %}
+  <script src="{% static "vendor/bootstrap/js/bootstrap.bundle.js" %}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{% static "vendor/jquery-easing/jquery.easing.js" %}"></script>
+
+  <!-- }Custom scripts for all pages-->
+  <script src="{% static "js/sb-admin-2.js" %}"></script>
+
+  <!-- Page level plugins -->
+  <script src="{% static "vendor/datatables/jquery.dataTables.js" %}"></script>
+  <script src="{% static "vendor/datatables/dataTables.bootstrap4.js" %}"></script>
+  <!-- Page level custom scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.20/sorting/date-eu.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/af-2.3.0/b-1.5.2/b-colvis-1.5.2/b-flash-1.5.2/b-html5-1.5.2/b-print-1.5.2/cr-1.5.0/fh-3.1.4/r-2.2.2/datatables.min.css"/>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/af-2.3.0/b-1.5.2/b-colvis-1.5.2/b-flash-1.5.2/b-html5-1.5.2/b-print-1.5.2/cr-1.5.0/fh-3.1.4/r-2.2.2/datatables.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.20/dataRender/datetime.js"></script>
+
+// Script to filter data accordind to date and downloadable options of report
+<script>
+    /*$('#data').dataTable();*/
+    $(function() {
+      $('#minDate').datepicker({dateFormat: 'dd/mm/yy'});
+      $('#maxDate').datepicker({dateFormat: 'dd/mm/yy'});
+    });
+    // Function for converting a mm/dd/yyyy date value into a numeric string for comparison (example 08/12/2010 becomes 20100812
+      $.fn.dataTableExt.afnFiltering.push(
+        function( oSettings, aData, iDataIndex ) {
+            var iFini = document.getElementById('minDate').value;
+            var iFfin = document.getElementById('maxDate').value;
+            var iStartDateCol = 2;
+
+            iFini=iFini.substring(6,10) + iFini.substring(3,5)+ iFini.substring(0,2);
+            iFfin=iFfin.substring(6,10) + iFfin.substring(3,5)+ iFfin.substring(0,2);
+
+            var datofini=aData[iStartDateCol].substring(6,10) + aData[iStartDateCol].substring(3,5)+ aData[iStartDateCol].substring(0,2);
+
+            if ( iFini === "" && iFfin == "" )
+            		{
+            			return true;
+            		}
+            else if ( iFini == "" && datofini < iFfin )
+            		{
+            			return true;
+            		}
+            else if ( iFfin >= datofini && iFini == "")
+            		{
+            			return true;
+            		}
+            else if (iFini <= datofini && iFfin >= datofini)
+            		{
+            			return true;
+            		}
+            return false;
+        }
+    );
+    $(document).ready(function() {
+    var table = $('#dataTable123').DataTable({
+        "responsive": true,
+        "pageLength": 25,
+        dom: 'B<"clear">lfrtip',
+        buttons: {
+          name: 'primary',
+          buttons: ['csv', 'excel', 'pdf' ]
+        },
+        columnDefs:[{targets:2, render:function(data){
+      return moment(data).format('DD/MM/YYYY');
+    }},
+    {targets:3, render:function(data){
+  return moment(data).format('DD/MM/YYYY');
+}}],
+      });
+      // Event listener to the two range filtering inputs to redraw on input
+    $("#btnGo").click(function () {
+      $('#dataTable123').DataTable().draw();
+    });
+
+    });
+</script>
+
+{% endblock %}
